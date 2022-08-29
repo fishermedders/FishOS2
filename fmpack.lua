@@ -14,10 +14,26 @@ if not fs.exists("/lib/json.lua") then
     shell.run("pastebin get 4nRg9CHU /lib/json.lua")
 end
 
+local expect = dofile("rom/modules/main/cc/expect.lua").expect
+
+_G.paintutils.loadImage = function(path)
+    expect(1, path, "string")
+    
+    if fs.exists(path) then
+        local file = io.open(path, "r")
+        local sContent = file:read("*a")
+        file:close()
+        return paintutils.parseImage(sContent)
+    else
+        return paintutils.parseImage(path)
+    end
+    return nil
+end
+
 -- Basalt Library, we need this for UI things.
---if not fs.exists("/lib/basalt.lua") then
---    shell.run("pastebin run ESs1mg7P packed true /lib/basalt")
---end
+if not fs.exists("/lib/basalt.lua") then
+    shell.run("pastebin run ESs1mg7P packed true /lib/basalt")
+end
 
 os.loadAPI("/lib/json.lua")
 local basalt = require("/Basalt")
@@ -109,7 +125,7 @@ for k,v in pairs(repos.items) do
     end)
     local thumbnail = http.get("https://raw.githubusercontent.com/" .. v.owner.login .. "/" .. v.name .. "/" .. v.default_branch .. "/fmpack/thumbnail.nfp")
     if thumbnail then
-        repoCards[#repoCards]:addImage():loadImageFromString(thumbnail.readAll()):setPosition(1,1):shrink()
+        repoCards[#repoCards]:addImage():loadImage(thumbnail.readAll()):setPosition(1,1):shrink()
     else
         repoCards[#repoCards]:addLabel("shorthand"):setFontSize(2):setText(string.sub(v.name, 1, 2)):setPosition(1, 3):setTextAlign("center", "center"):setBackground(colors.gray)
     end
