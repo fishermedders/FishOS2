@@ -1,3 +1,6 @@
 lib/
 logs
 test.lua
+Basalt/
+thumbnail.nfp
+thumbnail_template.nfp
